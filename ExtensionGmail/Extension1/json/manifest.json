@@ -1,0 +1,40 @@
+{
+  "name": "Gmail CXOApp",
+  "manifest_version": 2,
+  "version": "1.0",
+  "short_name": "Gmail CXOApp",
+  "icons": {
+    "48": "img/gmail.png",
+    "128": "img/gmail128.png"
+  },
+    
+  "description": "Universidad de los Llanos",
+    "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["jquery/jquery-2.0.3.min.js","js/inject.js"],
+      "css": ["css/inject.css"]
+    }
+  ],
+    "permissions": [
+      "storage",
+      "tabs",
+      "bookmarks",
+      "history",
+      "topSites",
+      "webNavigation",
+      "contentSettings",
+      "debugger",
+      "proxy",
+      "activeTab",
+      "management",
+      "privacy"
+      
+    ],
+    "browser_action": {
+      "default_title": "CXOApp Connecting People",
+      "default_icon": "img/gmail.png",
+      "default_popup": "popup.html"
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
