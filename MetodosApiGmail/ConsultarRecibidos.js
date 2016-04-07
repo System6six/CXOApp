@@ -1,7 +1,7 @@
-function consultarRecibidos(){
+function consultarRecibidos(idUsuario, consulta){
 
-        var idUsuario = "me";
-        var consulta = "from:juan.baez@cxoapp.cf"
+        //var idUsuario = "me";
+        //var consulta = "from:juan.baez@cxoapp.cf"
         var request = gapi.client.gmail.users.messages.list({
           'userId': idUsuario,
           'q': consulta
