@@ -1,0 +1,56 @@
+
+ESTANDAR DE CODIFICACION JAVASCRIPT
+
+1. Los ficheros tienen que ser nombrados en minúsculas utilizando la forma ‘underscore‘.
+	
+	jquery.js
+	betacompany_utils.js
+	namespace_example.js
+
+2. El objeto global se declara según la forma ‘UPPER_CASE’ con guión bajo como separador y precedido del signo de dolar ($).
+	
+	var $UDO = {};
+
+3. Los subojetos principales que categorizan las funcionalidades, se declaran según la forma ‘UPPER_CASE’ con guión bajo como separador.
+	
+	$UDO.UI = {}; // Jerarquía superior para todos los elementos gráficos.
+	$UDO.TICKETS = {}; // Jerarquía superior para todas las acciones de los tickets.
+	$UDO.WINDOW = {}; // Jerarquía superior para todas las acciones que engloben ventanas.
+	$UDO.UTILS = {}; // Jerarquía superior para utilidades. Aquí se suelen incluir bibliotecas varias.
+
+4. Las variables tienen que ser nombradas utilizando la forma ‘camelCase‘.
+
+	var myVar = foo;
+
+5. Los constructores tienen que ser nombrados utilizando la forma ‘StudlyCaps‘.
+	
+	var WindowFrame = function(col) {
+	var that = this,
+		color = col;
+ 
+	this.getColor = function() {
+		return color;
+	};
+}
+ 
+var blueWindow = new WindowFrame("blue");
+
+6. Las constantes, de haberlas, tienen que ser nombradas en ‘UPPER_CASE’ con guión bajo como separador.
+
+	$UDO.UI.window.defaults = function() {
+	var WINDOW_WIDTH = 400px,
+		WINDOW_HEIGHT = 400px;
+ 
+	/* ... */
+}
+
+7. Los métodos tienen que ser nombrados utilizando ‘camelCase‘.
+
+	$UDO.UI.printWindow = function( currentWindow ) {
+ 
+	var retrievingData = function() { /* ... */ },
+ 
+		populatingWindow = function() { /* ... */ },
+		printingWindow = function() { /* ... */ }
+ 
+}
