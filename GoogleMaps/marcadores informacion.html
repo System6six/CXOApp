@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>Maps Marcador</title>
+  	<style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+      	margin-top: 100px;
+        height: 70%; 
+        width: 70%;       
+        margin-left: 200px;
+      }      
+    </style>
+  </head>
+  <body>
+  	<div id="map"></div>
+  	<script>
+  			function initMap() {
+			  var myLatLng = {lat: 4.146472, lng: -73.635963}; // Se declara la variable con la posicion1
+			  var myLatLng2 = {lat: 4.142000, lng: -73.634042}; // Se declara la variable con la posicion2
+			  var contenido1 = '<div id="contenidoinformacion>"'+'<h1>Usuario1 cxoapp</h1>'+'<p>Nombre=xxxx <br> Direccion=xxxxxx. <br> cargo=xxxx</p></div> ';// Se declara la informacion en html sobre lo que va a llevar dentro del cuadro de informacion
+			  var infowindow = new google.maps.InfoWindow({//se crea el cuadro de informacion 			  	
+    			content: contenido1
+  				});
+			  //Se creea el mapa con las caracteristicas de zoom 15 y centrado en la posicion 1
+			  var map = new google.maps.Map(document.getElementById('map'), {
+			    zoom: 15,
+			    center: myLatLng
+			  });
+			  // se crea el primer marcador en la posicion 1 con el titulo cxoapp
+			  var marker = new google.maps.Marker({
+			    position: myLatLng,			    
+			    map: map,
+			    title: 'CxoApp',	
+			    label: 'C'   
+			  });
+			  marker.addListener('click', function() {// se inserta el cuadro de informacion al marcador
+    			infowindow.open(map, marker);
+  				});
+
+			  // se crea el primer marcador en la posicion 2 con el titulo cxoapp2
+			  var marker2 = new google.maps.Marker({
+			    position: myLatLng2,
+			    map: map,
+			    title: 'CxoApp2'
+			  });
+			}
+	</script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBJwNG0x1B8JSfdixXrEU50KkS5HhCldQ&signed_in=true&callback=initMap"></script>
+  </body>
