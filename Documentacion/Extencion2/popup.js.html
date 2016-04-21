@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: popup.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: popup.js</h1>
+
+ 
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+// Derechos de autor (c) 2014 El cromo Autores. Todos los derechos reservados.
+// El uso de este código fuente se rige por una licencia de tipo BSD que puede ser
+// Encontrado en el archivo de licencia.
+
+/**
+ * Obtener la URL actual.
+ *
+ * @param {function(string)} callback - llamada cuando la URL de la pestaña actual
+  * es encontrado.
+ */
+function getCurrentTabUrl(callback) {
+  //filtro de consulta que se pasa a chrome.tabs.query 
+  // https://developer.chrome.com/extensions/tabs#method-query
+  var queryInfo = {
+    active: true,
+    currentWindow: true
+  };
+
+  chrome.tabs.query(queryInfo, function(tabs) {
+    // Chrome.tabs.query invoca la devolución de llamada con una lista de las pestañas que coinciden con el
+     // consulta. Cuando se abre la ventana emergente, sin duda hay una ventana y, al menos,
+     // Una pestaña, por lo que podemos suponer con seguridad que las pestañas | | es un conjunto no vacío.
+     // Una ventana sólo puede tener una pestaña activa a la vez, por lo que la matriz se compone de
+     // Exactamente una pestaña.
+    var tab = tabs[0];
+
+    // Una pestaña es un objeto sencillo que proporciona información acerca de la ficha.
+     // Ver https://developer.chrome.com/extensions/tabs#type-Tab
+    var url = tab.url;
+
+   // Tab.url sólo está disponible si el permiso "activeTab" se declara.
+   // Si desea ver el URL de otras fichas (por ejemplo, después de la eliminación activa: true
+  // Desde | QueryInfo |), entonces se requiere el permiso de "pestañas" para ver su
+   // propiedades "URL".
+    console.assert(typeof url == 'string', 'tab.url should be a string');
+
+    callback(url);
+  });
+
+  /// La mayoría de los métodos de la API de extensión de Chrome son asíncronas. Esto significa que
+   // No se puede hacer algo como esto:
+   //
+   // Var url;
+   // chrome.tabs.query (QueryInfo, función (fichas) {
+   // url = pestañas [0] .url;
+   //});
+   // Alerta (url); // Muestra "indefinido", porque chrome.tabs.query es asíncrono.
+}
+
+/**
+ * @param {string} searchTerm -Término de búsqueda de Google de búsqueda de imágenes.
+ * @param {function(string,number,number)} callback - Se llama cuando una imagen tiene
+ *  ha encontrado. La devolución de llamada se pone la URL, la anchura y la altura de la imagen.
+ * @param {function(string)} errorCallback - Se llama cuando no se encuentra la imagen.
+  * La devolución de llamada para crear una cadena que describe la causa de fallo.
+ */
+function getImageUrl(searchTerm, callback, errorCallback) {
+  // Google image search - 100 searches per day.
+  // https://developers.google.com/image-search/
+  var searchUrl = 'https://ajax.googleapis.com/ajax/services/search/images' +
+    '?v=1.0&amp;q=' + encodeURIComponent(searchTerm);
+  var x = new XMLHttpRequest();
+  x.open('GET', searchUrl);
+  // La búsqueda de imágenes respuesta de la API de Google con JSON, así que vamos a analizarlo Chrome.
+  x.responseType = 'json';
+  x.onload = function() {
+    Traductor
+// Analizar y procesar la respuesta de Google Búsqueda de imágenes.
+    var response = x.response;
+    if (!response || !response.responseData || !response.responseData.results ||
+        response.responseData.results.length === 0) {
+      errorCallback('No response from Google Image search!');
+      return;
+    }
+    var firstResult = response.responseData.results[0];
+    // Tomar la miniatura en lugar de la imagen completa para obtener una aproximadamente
+     // Tamaño de la imagen consistente.
+    var imageUrl = firstResult.tbUrl;
+    var width = parseInt(firstResult.tbWidth);
+    var height = parseInt(firstResult.tbHeight);
+    console.assert(
+        typeof imageUrl == 'string' &amp;&amp; !isNaN(width) &amp;&amp; !isNaN(height),
+        'Unexpected respose from the Google Image Search API!');
+    callback(imageUrl, width, height);
+  };
+  x.onerror = function() {
+    errorCallback('Network error.');
+  };
+  x.send();
+}
+
+function renderStatus(statusText) {
+  document.getElementById('status').textContent = statusText;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  getCurrentTabUrl(function(url) {
+   // Poner el URL de la imagen en la búsqueda de Google.
+    renderStatus('Performing Google Image search for ' + url);
+
+    getImageUrl(url, function(imageUrl, width, height) {
+
+      renderStatus('Search term: ' + url + '\n' +
+          'Google image search result: ' + imageUrl);
+      var imageResult = document.getElementById('image-result');
+      // Establecer explícitamente la anchura/altura para reducir al mínimo el número de recargas. 
+      //Para  una sola imagen, esto no importa, pero si usted va a incrustar 
+      // múltiples imágenes externas en su página, entonces la ausencia de anchura/altura atributos 
+      //hace que la ventana emergente para cambiar el tamaño de varias veces.
+      imageResult.width = width;
+      imageResult.height = height;
+      imageResult.src = imageUrl;
+      imageResult.hidden = false;
+
+    }, function(errorMessage) {
+      renderStatus('Cannot display image. ' + errorMessage);
+    });
+  });
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getCurrentTabUrl">getCurrentTabUrl</a></li><li><a href="global.html#getImageUrl">getImageUrl</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Apr 21 2016 17:14:08 GMT-0500 (COT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
